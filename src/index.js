@@ -1,53 +1,86 @@
 // write your code here
-fetch("http://localhost:3000/images/")
+fetch("http://localhost:3000/images")
   .then((res) => res.json())
-  .then((image) => {
-    console.log("Inside GET Fetch: ", image);
+  .then((images) => {
+    console.log("Inside GET Fetch: ", images);
 
+    const data = images
     // Do something with product
+    console.log("data: ", data)
 
+    renderImageCard(images)
   });
- 
-
-  const images = [
-    {
-      id: 1,
-      title: "Coder dog",
-      likes: 7,
-      image: "./assets/coder-dog.png",
-      comments: [
-        {
-          id: 1,
-          content: "What a cute dog!",
-          imageId: 1
-        },
-        {
-          imageId: 1,
-          content: "Funny dog!!",
-          id: 4
-        },
-        {
-          imageId: 1,
-          content: "Hes a good boy!!",
-          id: 5
-        }
-      ]
-    }
-  ];
   
-  console.log("An image object to work with: ", images[0])
+  // console.log("An image object to work with: ", images)
 
 
+const imageSectionEl = document.querySelector(".image-container")
 
-const ulel = document.querySelector(".image-container")
 
-function renderCard(images) {
-    let postedCard = {}
-    console.log("inside loop")
-    for (let i = 0; i < images.length; i++) {
-        const image = images[i];
-    }
-    return postedCard
+// function renderImagesList(images) {
+
+// }
+
+function renderImageCard(imageData) {
+  console.log("inside render image", imageData)
+
+  for (let i = 0; i < imageData.length; i++) {
+    const data = imageData[i];
+
+    console.log("inside image data", data)
+    const articleEl = document.createElement("article")
+    imageSectionEl.append(articleEl)
+    articleEl.classList.add("image-card")
+
+    const h2El = document.createElement("h2")
+    articleEl.append(h2El)
+    h2El.innerText = data.title
+    h2El.classList.add("title")
+    
+    const imageEl = document.createElement("img")
+    articleEl.append(imageEl)
+    imageEl.setAttribute("src", data.image)
+    imageEl.classList.add("image")
+
+    const divEl = document.createElement("div")
+    articleEl.append(divEl)
+    divEl.classList.add("likes-section")
+
+    const spanEl = document.createElement("span")
+    divEl.append(spanEl)
+    spanEl.classList.add("likes")
+    spanEl.innerText = data.likes
+
+    const likeButtonEl = document.createElement("button")
+    divEl.append(likeButtonEl)
+    likeButtonEl.classList.add("like-button")
+    likeButtonEl.innerText = "♥"
+
+    likeButtonEl.addEventListener("click", () => {
+      console.log("clicked! ", data.id, data.likes)
+    
+      // You need access to the "id" and the current "likes" of an image/post
+    
+      // Write our fetch request in here...
+      fetch(`http://localhost:3000/images/${data.id}`, {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ likes: 3 })
+    })
+    })
+
+
+    const ulEl = document.createElement("ul")
+    articleEl.append(ulEl)
+    ulEl.classList.add("comments")
+
+    data.comments.forEach(comment => {
+      console.log("inside comment", comment)
+      const liCommentEl = document.createElement("li")
+      ulEl.append(liCommentEl)
+      liCommentEl.innerText = comment.content
+    });
+  }
 }
-
-renderCard
